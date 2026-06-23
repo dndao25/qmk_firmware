@@ -1,0 +1,20 @@
+name: Build QMK Firmware
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install QMK
+        run: pip install qmk
+      - name: Build
+        run: qmk compile -kb kiiboom/cybrix16 -km via
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cybrix16_via_firmware
+          path: '*.bin'
