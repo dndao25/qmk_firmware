@@ -1,37 +1,15 @@
-name: Build QMK Firmware
-on: workflow_dispatch
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install QMK
-        run: |
-          pip install qmk
-          qmk setup -y
-
-      - name: Copy keyboard files
+- name: Copy keyboard files
         run: |
           mkdir -p ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via
-          cp keyboards/kiiboom/cybrix16/info.json ~/qmk_firmware/keyboards/kiiboom/cybrix16/
-          cp keyboards/kiiboom/cybrix16/config.h ~/qmk_firmware/keyboards/kiiboom/cybrix16/
-          cp keyboards/kiiboom/cybrix16/rules.mk ~/qmk_firmware/keyboards/kiiboom/cybrix16/
-          cp keyboards/kiiboom/cybrix16/keymaps/via/keymap.c ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via/
-          cp keyboards/kiiboom/cybrix16/keymaps/via/rules.mk ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via/
+          cp $GITHUB_WORKSPACE/keyboards/kiiboom/cybrix16/info.json ~/qmk_firmware/keyboards/kiiboom/cybrix16/
+          cp $GITHUB_WORKSPACE/keyboards/kiiboom/cybrix16/config.h ~/qmk_firmware/keyboards/kiiboom/cybrix16/
+          cp $GITHUB_WORKSPACE/keyboards/kiiboom/cybrix16/rules.mk ~/qmk_firmware/keyboards/kiiboom/cybrix16/
+          cp $GITHUB_WORKSPACE/keyboards/kiiboom/cybrix16/keymaps/via/keymap.c ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via/
+          cp $GITHUB_WORKSPACE/keyboards/kiiboom/cybrix16/keymaps/via/rules.mk ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via/
 
-      - name: Build
+      - name: Debug - list files
         run: |
-          cd ~/qmk_firmware
-          qmk compile -kb kiiboom/cybrix16 -km via
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cybrix16_via_firmware
-          path: ~/qmk_firmware/*.bin
+          echo "=== Fork workspace ==="
+          ls $GITHUB_WORKSPACE/keyboards/kiiboom/cybrix16/
+          echo "=== QMK target ==="
+          ls ~/qmk_firmware/keyboards/kiiboom/cybrix16/
