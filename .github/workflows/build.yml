@@ -7,14 +7,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install QMK
-        run: pip install qmk
+        run: |
+          pip install qmk
+          qmk setup -y
+
+      - name: Copy keyboard files
+        run: |
+          mkdir -p ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via
+          cp keyboards/kiiboom/cybrix16/info.json ~/qmk_firmware/keyboards/kiiboom/cybrix16/
+          cp keyboards/kiiboom/cybrix16/config.h ~/qmk_firmware/keyboards/kiiboom/cybrix16/
+          cp keyboards/kiiboom/cybrix16/rules.mk ~/qmk_firmware/keyboards/kiiboom/cybrix16/
+          cp keyboards/kiiboom/cybrix16/keymaps/via/keymap.c ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via/
+          cp keyboards/kiiboom/cybrix16/keymaps/via/rules.mk ~/qmk_firmware/keyboards/kiiboom/cybrix16/keymaps/via/
+
       - name: Build
-        run: qmk compile -kb kiiboom/cybrix16 -km via
+        run: |
+          cd ~/qmk_firmware
+          qmk compile -kb kiiboom/cybrix16 -km via
+
       - uses: actions/upload-artifact@v4
         with:
           name: cybrix16_via_firmware
-          path: '*.bin'
+          path: ~/qmk_firmware/*.bin
